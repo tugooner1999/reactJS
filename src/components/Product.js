@@ -25,7 +25,7 @@ export default function Product(props) {
                                 <td>{index + 1}</td>
                                 <td>{item.name}</td>
                                 <td width="150">
-                                    <button className="btn btn-danger btn-sm">
+                                    <button className="btn btn-danger btn-sm" onClick={() => props.onRemove(item.id)}>
                                         Xóa sản phẩm
                   </button>
                                 </td>
