@@ -4,6 +4,7 @@ import './App.css';
 import Header from './components/Header';
 import Nav from './components/Nav';
 import Product from './components/Product';
+import AddProductForm from './components/form';
 import data from "./data";
 function App() {
   const [products, setProducts] = useState(data);
@@ -20,6 +21,11 @@ function App() {
     const newProduct = products.filter((item) => item.id !== id);
     setProducts(newProduct);
   }
+
+  const onHandleAdd = (item) => {
+    console.log(item);
+    setProducts([...products,item])
+  }
   return (
     <div className="App">
       <Header />
@@ -27,6 +33,8 @@ function App() {
         <div className="row">
           <Nav />
           <main className="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+          <br></br>
+          <AddProductForm onAdd={onHandleAdd} />
           <Product products={products} onRemove={onHandleRemove} />
           </main>
         </div>
