@@ -16,6 +16,8 @@ export default function Product(props) {
                         <tr>
                             <th scope="col">#</th>
                             <th scope="col">Tên sản phẩm</th>
+                            <th scope="col">Giá sản phẩm</th>
+                            <th scope="col">Danh mục</th>
                             <th scope="col">Hành động</th>
                         </tr>
                     </thead>
@@ -24,9 +26,11 @@ export default function Product(props) {
                             <tr key={index}>
                                 <td>{index + 1}</td>
                                 <td>{item.name}</td>
+                                <td>{item.price} VND</td>
+                                <td>{item.category}</td>
                                 <td width="150">
                                     <button className="btn btn-danger btn-sm" onClick={() => props.onRemove(item.id)}>
-                                        Xóa sản phẩm
+                                        Delete
                   </button>
                                 </td>
                             </tr>

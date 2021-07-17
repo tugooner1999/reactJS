@@ -26,10 +26,8 @@ const AddProductForm = (props) => {
             <div className="mb-3">
                 <label className="form-label">Giá sản phẩm</label>
                 <input type="number" className="form-control" {...register("price", { required: true, min:100 })} />
-               
                     {errors.price && errors.price.type === "required" && <span className="d-block mt-2 text-danger">Vui lòng không để trống giá</span>}
                     {errors.price && errors.price.type === "min" && <span className="d-block mt-2 text-danger">Vui lòng nhập giá trên 100</span> }
-                
             </div>
             <div className="mb-3">
                 <label className="form-label">Danh mục</label>
