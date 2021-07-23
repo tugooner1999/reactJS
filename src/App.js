@@ -1,81 +1,94 @@
 import logo from './logo.svg';
 import { useState, useEffect } from "react";
 import './App.css';
-import Header from './components/Header';
-import Nav from './components/Nav';
-import Product from './components/Product';
-import AddProductForm from './components/form';
 import data from "./data";
+import { add, getAll, remove, update } from "./api/productApi";
+import Routes from "./routes";
+import swal from 'sweetalert';
+
 function App() {
   const [products, setProducts] = useState(data);
-  // const [status, setStatus] = useState(false);
-  // const [count, setCount] = useState(0);
-  // function change(){
-  //   setStatus(!status);
-  //   setCount(count + 1)
-  // }
 
-  // const [color, setColor]  = useState();
-
+  // hien thi data tu API
   useEffect(() => {
-    fetch('https://5f1d003539d95a0016953aaa.mockapi.io/Products')
-      .then((respone) => respone.json())
-      .then((data) => setProducts(data));
+    const getProduct = async () => {
+      try {
+        const { data } = await getAll();
+        setProducts(data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    getProduct();
   }, []);
 
-  function onHandleRemove(id) {
-    fetch('https://5f1d003539d95a0016953aaa.mockapi.io/Products/' + id, {
-      method: "DELETE"
+
+  // xoa data tu API
+  const onHandleRemove = (id) => {
+    swal({
+      title: "bạn có chắc muốn xóa ?",
+      text: "Bạn có thể mất vĩnh viễn dữ liệu và không thể khôi phục",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
     })
-      .then((response) => response.json())
-      .then((data) => {
-        const newProduct = products.filter((item) => item.id !== data.id);
-        setProducts(newProduct);
-      })
+      .then((willDelete) => {
+        if (willDelete) {
+          swal("Xóa thành công, dữ liệu mới sẽ được cập nhật", {
+            icon: "success", timer: 2000
+          });
+          remove(id); // xoa data tren API
+          const newProduct = products.filter((item) => item.id !== id);
+          setProducts(newProduct);
+        } else {
+          swal("Xóa thất bại ! Dữ liệu bạn nguyên vẹn", {
+            icon: "error", timer: 2000
+          });
+        }
+      });
+  };
+
+
+  // them data tu API
+  const onHandleAdd = async (item) => {
+    swal({
+      title: "Thêm thành công!",
+      text: "Dữ liệu đang được cập nhật",
+      icon: "success",
+      timer: 2000
+    });
+    try {
+      const { data } = await add(item);
+      setProducts([...products, data]);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
-  const onHandleAdd = (item) => {
-    fetch('https://5f1d003539d95a0016953aaa.mockapi.io/Products', {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(item)
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        setProducts([...products, data])
-      })
+  // cập nhật data từ API
+  const onHandleEdit = async (item) => {
+    swal({
+      title: "Cập nhật thành công!",
+      text: "Dữ liệu đang được cập nhật",
+      icon: "success",
+      timer: 2000
+    });
+    try {
+      const { data } = await update(item);
+      const newProduct = products.map((product) =>
+        product.id == data.id ? data : product
+      );
+      setProducts(newProduct);
+    } catch (error) {
+      console.log(error);
+    }
   }
   return (
-    <div className="App">
-      <Header />
-      <div className="container-fluid">
-        <div className="row">
-          <Nav />
-          <main className="col-md-9 ms-sm-auto col-lg-10 px-md-4">
-            <br></br>
-            <AddProductForm onAdd={onHandleAdd} />
-            <Product products={products} onRemove={onHandleRemove} />
-          </main>
-        </div>
-      </div>
-
-      {/* {count}
-      {status && (
-        <div>Nôi dung</div>
-      )}
-
-
-      {/* <button className="btn btn-primary" onClick = {() => change(!status)}>Click</button> */}
-      {/* khi ấn Click thì hàm change sẽ thực hiện setStatus và setCount set giá trị
-       cho biến status và count với value mặc định sang giá trị khác */}
-
-      {/* <div className="container" style={{border: '1px solid #000', width: '200px', height: '200px', background: color,}} />
-       <br></br>
-       <button className="btn btn-success" onClick = {() => setColor("green")}>Xanh</button>
-       <button className="btn btn-danger" onClick = {() => setColor("red")}>Đỏ</button> */}
-    </div>
+    <Routes
+      products={products}
+      onRemove={onHandleRemove}
+      onAdd={onHandleAdd}
+      onEdit={onHandleEdit} />
   );
 }
 
